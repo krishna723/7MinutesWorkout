@@ -1,5 +1,7 @@
 package com.example.a7minutesworkout
 
+import android.app.Dialog
+import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +13,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.a7minutesworkout.databinding.ActivityExerciseBinding
+import com.example.a7minutesworkout.databinding.DialogCustomBackConfirmationBinding
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -45,13 +48,33 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         exerciseList=Constants.defaultExerciseList()
         binding?.toolbarExercise?.setNavigationOnClickListener{
-            onBackPressed()
+            customDialogForBackButton()
         }
 
        // binding?.flProgressBar?.visibility=View.INVISIBLE
         setupRestView()
         setupExerciseStatusRecyclerView()
         tts= TextToSpeech(this,this)
+    }
+
+    override fun onBackPressed() {
+        customDialogForBackButton()
+
+    }
+    private fun customDialogForBackButton() {
+        val customDialog=Dialog(this)
+//        customDialog.setContentView(R.layout.dialog_custom_back_confirmation)
+        val dialogBinding= DialogCustomBackConfirmationBinding.inflate(layoutInflater)
+        customDialog.setContentView(dialogBinding.root)
+        customDialog.setCanceledOnTouchOutside(false)
+        dialogBinding.btnYes.setOnClickListener{
+            this@ExerciseActivity.finish()
+            customDialog.dismiss()
+        }
+        dialogBinding.btnNo.setOnClickListener{
+            customDialog.dismiss()
+        }
+        customDialog.show()
     }
 
     private fun setupExerciseStatusRecyclerView(){
@@ -137,13 +160,16 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
 
             override fun onFinish() {
-                exerciseList!![currentExercisePosition].setIsSelected(false)
-                exerciseList!![currentExercisePosition].setIsCompleted(true)
-                exerciseStatusAdapter!!.notifyDataSetChanged()
+
                 if(currentExercisePosition<exerciseList?.size!!-1){
+                    exerciseList!![currentExercisePosition].setIsSelected(false)
+                    exerciseList!![currentExercisePosition].setIsCompleted(true)
+                    exerciseStatusAdapter!!.notifyDataSetChanged()
                     setupRestView()
                 }else{
-                    Toast.makeText(this@ExerciseActivity,"Congratulation! You have complete the 7 munites workout",Toast.LENGTH_LONG).show()
+                    val intent= Intent(this@ExerciseActivity,FinishActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
             }
 

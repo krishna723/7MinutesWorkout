@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">7MinutesWorkout</string>
+
+    <string-array name="unit">
+        <item>cm</item>
+        <item>feet</item>
+    </string-array>
+    <string-array name="usUnit">
+        <item>feet</item>
+        <item>inch</item>
+    </string-array>
 </resources>
