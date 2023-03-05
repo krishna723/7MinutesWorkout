@@ -53,6 +53,38 @@ class BMIActivity : AppCompatActivity() {
         }
 
         binding?.btnBMICalculate?.setOnClickListener{
+            calculateUnit()
+
+        }
+    }
+
+    private fun makeVisibleMetricUnitsView(){
+        currentVisibleView=METRIC_UNITS_VIEW
+        units=resources.getStringArray(R.array.unit)
+        arrayAdapter=ArrayAdapter(this,R.layout.dropdown_item, units as Array<out String>)
+        binding?.atMetricUnit?.setAdapter(arrayAdapter)
+        binding?.etMetricUnitWeight?.hint="Weight (in kg)"
+        clear()
+
+    }
+    private fun makeVisibleUSUnitsView(){
+        currentVisibleView=US_UNITS_VIEW
+        units=resources.getStringArray(R.array.usUnit)
+        arrayAdapter=ArrayAdapter(this,R.layout.dropdown_item, units as Array<out String>)
+        binding?.atMetricUnit?.setAdapter(arrayAdapter)
+        binding?.etMetricUnitWeight?.hint="Weight (in pounds)"
+        clear()
+    }
+
+    private fun clear(){
+        binding?.etMetricUnitWeight?.text!!.clear()
+        binding?.etMetricUnitHeight?.text!!.clear()
+        binding?.atMetricUnit?.text!!.clear()
+
+    }
+
+    private fun calculateUnit(){
+        if(currentVisibleView==METRIC_UNITS_VIEW){
             if(validateMetricUnits()){
                 var heightValue: Float?= null
                 val weightValue :Float=binding?.etMetricUnitWeight?.text.toString().toFloat()
@@ -72,31 +104,27 @@ class BMIActivity : AppCompatActivity() {
                 Toast.makeText(this@BMIActivity,"Please enter valid value",Toast.LENGTH_LONG).show()
 
             }
+        }else{
+            if(validateMetricUnits()){
+                var heightValue: Float?= null
+                val weightValue :Float=binding?.etMetricUnitWeight?.text.toString().toFloat()
 
+                if (binding?.atMetricUnit?.text.toString().equals("feet")){
+                    heightValue=binding?.etMetricUnitHeight?.text.toString().toFloat()*12
+
+                }else if(binding?.atMetricUnit?.text.toString().equals("inch")){
+                    heightValue=binding?.etMetricUnitHeight?.text.toString().toFloat()
+
+                }
+
+                val bmi=703*(weightValue/(heightValue!!*heightValue!!))
+                displayBMIResult(bmi)
+
+            }else{
+                Toast.makeText(this@BMIActivity,"Please enter valid value",Toast.LENGTH_LONG).show()
+
+            }
         }
-    }
-
-    private fun makeVisibleMetricUnitsView(){
-        units=resources.getStringArray(R.array.unit)
-        arrayAdapter=ArrayAdapter(this,R.layout.dropdown_item, units as Array<out String>)
-        binding?.atMetricUnit?.setAdapter(arrayAdapter)
-        binding?.etMetricUnitWeight?.hint="Weight (in kg)"
-        clear()
-
-    }
-    private fun makeVisibleUSUnitsView(){
-        units=resources.getStringArray(R.array.usUnit)
-        arrayAdapter=ArrayAdapter(this,R.layout.dropdown_item, units as Array<out String>)
-        binding?.atMetricUnit?.setAdapter(arrayAdapter)
-        binding?.etMetricUnitWeight?.hint="Weight (in pounds)"
-        clear()
-    }
-
-    private fun clear(){
-        binding?.etMetricUnitWeight?.text!!.clear()
-        binding?.etMetricUnitHeight?.text!!.clear()
-        binding?.atMetricUnit?.text!!.clear()
-
     }
 
     private fun displayBMIResult(bmi:Float){
