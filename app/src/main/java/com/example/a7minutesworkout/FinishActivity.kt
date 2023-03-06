@@ -29,9 +29,9 @@ class FinishActivity : AppCompatActivity() {
             finish()
         }
 
-        val historyDao= (application as WorkOutApp).db!!.historyDao()
+        val Dao= (application as WorkOutApp).db!!.historyDao()
 
-            addDateToDatabase(historyDao)
+            addDateToDatabase(Dao)
 
     }
     private fun addDateToDatabase(historyDao: HistoryDao){
